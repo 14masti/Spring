@@ -1,0 +1,26 @@
+// function
+CREATE OR REPLACE FUNCTION set_doctor_schedule_id()
+RETURNS TRIGGER AS $$
+declare 
+maxSindex Int :=1;
+BEGIN
+
+	select max(doct_sindex) into maxSindex from doctorschedule21 where doct_id= New.doct_id;
+    IF maxSindex IS NULL THEN
+        maxSindex:=1;
+    else
+    maxSindex=maxSindex+1;
+    end if;
+	New.doct_sindex=maxSindex;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+//trigger
+CREATE TRIGGER auto_set_doctor_schedule_id
+BEFORE INSERT ON doctorschedule21
+FOR EACH ROW
+EXECUTE FUNCTION set_doctor_schedule_id();
+
+
