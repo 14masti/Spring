@@ -1,0 +1,70 @@
+/*********************get slotcount for the given doctorID and given weekday ********************************/
+
+CREATE OR REPLACE FUNCTION GetSlotCountForDoctor(docid integer, weekday integer)
+RETURNS integer AS $$
+DECLARE
+    slot_count integer := 0;
+    slot_record RECORD;  -- Declare a record variable outside the loop
+BEGIN
+    -- Iterate through doctor's available time slots
+    FOR slot_record IN
+        SELECT
+            "doctorid",
+            "doctorslotindex",
+            "doctoravailablefrom"::time,
+            "doctoravailableto"::time,
+            "doctoravailableslot",
+            "doctorschedule"
+        FROM
+            T2_doctorschedule 
+        WHERE
+            "doctorid" = docid
+    LOOP
+        -- Check if the specified weekday is included in the doctor's schedule
+        IF position(weekday::text in slot_record.doctorschedule) > 0 THEN
+            -- Calculate the slot intervals
+            FOR i IN 0..((EXTRACT(EPOCH FROM (slot_record.doctoravailableto - slot_record.doctoravailablefrom)) / 60) / slot_record.doctoravailableslot - 1)::integer
+            LOOP
+                -- Increment the slot count
+                slot_count := slot_count + 1;
+            END LOOP;
+        END IF;
+    END LOOP;
+    
+    -- Return the slot count
+    RETURN slot_count;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+
+
+/****************************************getslotsfor the given docid and date from appointmentsslotcalendar******************************************/
+
+
+create or Replace function getslotcountperdate(doctor_id integer,slot_date DATE)
+returns integer as $$
+
+Declare 
+   res integer :=0;
+BEGIN
+	select count(*) into res  
+	from appointmentsslotcalendar 
+	where slotdoctorid=doctor_id 
+	and slotdate=slot_date;
+	
+	return res;
+END;
+$$ LANGUAGE plpgsql;
+
+
+select getslotcountperdate(6,'2023-09-25')
+
+select * from appointmentsslotcalendar where slotdoctorid=6 and slotdate='2023-09-25'
+
+
+
+
+
+
