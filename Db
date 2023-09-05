@@ -56,3 +56,76 @@ BEGIN
         start_date := CURRENT_DATE;
     END LOOP;
 END $$
+
+
+
+
+
+
+
+
+
+
+CREATE OR REPLACE FUNCTION slotgenonrange(doctorid INT, currentdate DATE)
+RETURNS VOID AS
+$$
+DECLARE
+    d integer;
+    r integer;
+    res_record RECORD;
+    slot_record RECORD;
+    doctor_record RECORD;
+BEGIN
+    SELECT doc_id, range_days INTO d, r FROM range_table;
+    
+    FOR res_record IN 0..r LOOP
+        SELECT
+            "slotid",
+            "slotdoctorid",
+            "slotdate",
+            "slotfrom",
+            "slotto",
+            "slotstatus"
+        INTO
+            slot_record."slotid",
+            slot_record."slotdoctorid",
+            slot_record."slotdate",
+            slot_record."slotfrom",
+            slot_record."slotto",
+            slot_record."slotstatus"
+        FROM
+            appointmentsslotcalendar
+        WHERE
+            "slotdoctorid" = d
+            AND "slotdate" = currentdate;
+        
+        SELECT
+            "doctorid",
+            "doctorslotindex",
+            "doctoravailablefrom"::time,
+            "doctoravailableto"::time,
+            "doctoravailableslot",
+            "doctorschedule"
+        INTO
+            doctor_record."doctorid",
+            doctor_record."doctorslotindex",
+            doctor_record."doctoravailablefrom",
+            doctor_record."doctoravailableto",
+            doctor_record."doctoravailableslot",
+            doctor_record."doctorschedule"
+        FROM
+            doctorschedule123
+        WHERE
+            "doctorid" = d;
+        
+        IF currentdate = slot_record."slotdate"::date THEN
+            currentdate = currentdate + 1;
+        ELSE
+            IF position(EXTRACT(ISODOW FROM currentdate)::text IN doctor_record."doctorschedule") > 0 THEN
+                PERFORM create_slots_for_doctor(doctor_record."doctorid", currentdate);
+            END IF;
+        END IF;
+    END LOOP;
+END;
+$$
+LANGUAGE plpgsql;
