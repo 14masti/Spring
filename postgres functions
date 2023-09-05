@@ -149,3 +149,20 @@ select chinna(3,CURRENT_DATE)
 
 
 
+
+
+
+
+
+select Insert_alldoctors()
+
+CREATE OR REPLACE FUNCTION Insert_alldoctors() returns void as $$
+BEGIN
+   for i in 1..7 loop
+    perform chinna(i,current_DATE);
+	end loop;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
