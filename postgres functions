@@ -163,6 +163,39 @@ BEGIN
 	end loop;
 END;
 $$ LANGUAGE plpgsql;
- 
+
+
+/**************************************update*************************************************/
+
+
+
+
+
+SELECT * FROM doctorschedule_bhaskar
+SELECT * FROM appointmentsslotcalendar where slotdoctorid=1
+SELECT GenerateAppointmentSlot(1, CURRENT_DATE)
+
+
+UPDATE doctorschedule_bhaskar
+SET doctorschedule = '15'
+WHERE doctorid=1 and doctorslotindex=1;
+
+
+call UpdateAppointmentSlots(1)
+
+CREATE OR REPLACE PROCEDURE UpdateAppointmentSlots(doctor_id INT) AS $$
+DECLARE
+    day_to_check TEXT;
+    current_day_of_week INT;
+    slot_date DATE;
+BEGIN
+            DELETE FROM appointmentsslotcalendar
+            WHERE slotdoctorid = doctor_id ;
+
+            PERFORM chinna(doctor_id, current_date);
+END;
+$$ LANGUAGE PLPGSQL;
+
+
 
 
