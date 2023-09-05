@@ -64,6 +64,59 @@ select getslotcountperdate(6,'2023-09-25')
 select * from appointmentsslotcalendar where slotdoctorid=6 and slotdate='2023-09-25'
 
 
+/**********************************************procedure `1********************************/
+
+select * from appointmentsslotcalendar;
+
+select * from doctorschedule_bhaskar;
+
+
+
+select * from GenerateAppointmentSlot(5,'2023-09-05');
+
+
+CREATE OR REPLACE FUNCTION GenerateAppointmentSlot(doctor_id INT, today_date DATE) RETURNS VOID AS $$
+DECLARE
+    slot_exists INT;
+    next_date DATE;
+    current_day_of_week INT;
+    res BOOLEAN;
+    day_to_check TEXT;
+BEGIN
+    -- Check if a slot already exists for the current date
+    SELECT COUNT(*) INTO slot_exists
+    FROM appointmentsslotcalendar
+    WHERE slotdoctorid = doctor_id AND slotdate = today_date;
+
+    IF slot_exists > 0 THEN
+        -- Slot already exists, increment the date by one day
+        next_date := today_date + 1;
+        PERFORM GenerateAppointmentSlot(doctor_id, next_date);
+    ELSE
+    	current_day_of_week := EXTRACT(ISODOW FROM today_date);
+    	-- Convert the current day of the week to a string to match the format in doctorschedule
+        day_to_check := current_day_of_week::TEXT;
+
+        -- Check if the day_to_check is present in doctorschedule
+        SELECT EXISTS (
+            SELECT 1
+            FROM doctorschedule_bhaskar
+            WHERE doctorid = doctor_id AND POSITION(day_to_check IN doctorschedule) > 0
+        ) INTO res;
+
+        IF res THEN
+            -- Doctor is available, generate the slot
+            PERFORM create_slots_for_doctor(doctor_id, today_date);
+            -- You may want to commit the transaction here if needed
+        ELSE
+            -- Doctor is not available on the current date
+            -- You can add error handling or return a message as needed
+            RAISE EXCEPTION 'Doctor is not available on the current date';
+        END IF;
+    END IF;
+END;
+$$ LANGUAGE PLPGSQL;
+
 
 
 
