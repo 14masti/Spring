@@ -88,11 +88,6 @@ BEGIN
     FROM appointmentsslotcalendar
     WHERE slotdoctorid = doctor_id AND slotdate = today_date;
 
-    IF slot_exists > 0 THEN
-        -- Slot already exists, increment the date by one day
-        next_date := today_date + 1;
-        PERFORM GenerateAppointmentSlot(doctor_id, next_date);
-    ELSE
     	current_day_of_week := EXTRACT(ISODOW FROM today_date);
     	-- Convert the current day of the week to a string to match the format in doctorschedule
         day_to_check := current_day_of_week::TEXT;
@@ -104,19 +99,52 @@ BEGIN
             WHERE doctorid = doctor_id AND POSITION(day_to_check IN doctorschedule) > 0
         ) INTO res;
 
-        IF res THEN
+        IF res then
             -- Doctor is available, generate the slot
             PERFORM create_slots_for_doctor(doctor_id, today_date);
             -- You may want to commit the transaction here if needed
         ELSE
-            -- Doctor is not available on the current date
-            -- You can add error handling or return a message as needed
-            RAISE EXCEPTION 'Doctor is not available on the current date';
+           RAISE NOTICE 'DATE IS %', today_date;
+            RAISE NOTICE 'Doctor is not available on the current date';
         END IF;
-    END IF;
+
 END;
 $$ LANGUAGE PLPGSQL;
 
+
+
+
+
+
+
+CREATE OR REPLACE FUNCTION chinna(doctor_id INT, today_date DATE) RETURNS VOID AS $$
+DECLARE
+    slot_exists INT;
+    next_date DATE;
+    DUMMY TEXT;
+    current_day_of_week INT;
+    res BOOLEAN;
+    day_to_check TEXT;
+    availability_range INT;
+BEGIN
+
+ SELECT rangeofavail INTO availability_range
+    FROM doc_availability
+    WHERE docid = doctor_id;
+
+         RAISE NOTICE 'entering into the availability_range'; 
+        FOR i IN 1..availability_range LOOP
+        
+        	PERFORM GenerateAppointmentSlot(doctor_id,today_date);
+   			today_date := today_date + 1;
+   			RAISE NOTICE 'LOOP IS %',today_date;
+    END LOOP;
+   
+END;
+$$ LANGUAGE PLPGSQL;
+
+SELECT GenerateAppointmentSlot(1, CURRENT_DATE)
+select chinna(3,CURRENT_DATE)
 
 
 
