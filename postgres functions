@@ -116,6 +116,8 @@ $$ LANGUAGE PLPGSQL;
 
 
 
+/******************************generate slots for the given range***************************************/
+
 
 CREATE OR REPLACE FUNCTION chinna(doctor_id INT, today_date DATE) RETURNS VOID AS $$
 DECLARE
@@ -150,7 +152,7 @@ select chinna(3,CURRENT_DATE)
 
 
 
-
+/******************************************generate slots for all doctors**********************************/
 
 
 
@@ -165,7 +167,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-/**************************************update*************************************************/
+/**************************************update the slots based on doctor modifications*************************************************/
 
 
 
