@@ -194,7 +194,7 @@ BEGIN
             DELETE FROM appointmentsslotcalendar
             WHERE slotdoctorid = doctor_id ;
 
-            PERFORM chinna(doctor_id, current_date);
+            PERFORM Loopforrange(doctor_id, current_date);
 END;
 $$ LANGUAGE PLPGSQL;
 
