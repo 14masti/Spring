@@ -119,7 +119,7 @@ $$ LANGUAGE PLPGSQL;
 /******************************generate slots for the given range***************************************/
 
 
-CREATE OR REPLACE FUNCTION chinna(doctor_id INT, today_date DATE) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION LoopForRange(doctor_id INT, today_date DATE) RETURNS VOID AS $$
 DECLARE
     slot_exists INT;
     next_date DATE;
@@ -146,7 +146,7 @@ END;
 $$ LANGUAGE PLPGSQL;
 
 SELECT GenerateAppointmentSlot(1, CURRENT_DATE)
-select chinna(3,CURRENT_DATE)
+select LoopForRange(3,CURRENT_DATE)
 
 
 
@@ -161,7 +161,7 @@ select Insert_alldoctors()
 CREATE OR REPLACE FUNCTION Insert_alldoctors() returns void as $$
 BEGIN
    for i in 1..7 loop
-    perform chinna(i,current_DATE);
+    perform LoopForRange(i,current_DATE);
 	end loop;
 END;
 $$ LANGUAGE plpgsql;
