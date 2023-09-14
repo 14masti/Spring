@@ -1,0 +1,9 @@
+com\masti\health\HealthManagment\model\NetworkHospitals.class
+com\masti\health\HealthManagment\controller\HealthController.class
+com\masti\health\HealthManagment\HealthManagmentApplication.class
+com\masti\health\HealthManagment\model\InsurancePackages.class
+com\masti\health\HealthManagment\repository\HealthRepository.class
+com\masti\health\HealthManagment\utils\InsurancePackageMapper.class
+com\masti\health\HealthManagment\dao\HealthDAO.class
+com\masti\health\HealthManagment\dao\HealthIntDAO.class
+com\masti\health\HealthManagment\utils\HealthMapper.class
