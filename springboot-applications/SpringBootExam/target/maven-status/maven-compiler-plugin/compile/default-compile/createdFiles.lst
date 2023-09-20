@@ -1,0 +1,9 @@
+com\spring\exam\SpringBootExam\contract\BookMapper.class
+com\spring\exam\SpringBootExam\SpringBootExamApplication.class
+com\spring\exam\SpringBootExam\contract\PublishingHouseMapper.class
+com\spring\exam\SpringBootExam\dao\IntBookDAO.class
+com\spring\exam\SpringBootExam\repository\BookRepository.class
+com\spring\exam\SpringBootExam\model\PublishingHouse.class
+com\spring\exam\SpringBootExam\controller\BookController.class
+com\spring\exam\SpringBootExam\dao\BookDAO.class
+com\spring\exam\SpringBootExam\model\Book.class

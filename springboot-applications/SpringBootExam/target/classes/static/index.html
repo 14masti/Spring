@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add a New Book</title>
+    
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Include DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+
+    <!-- Include DataTables JavaScript -->
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        form {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        #message {
+            margin-top: 10px;
+            color: green;
+        }
+
+        /* DataTables styles */
+        .dataTables_wrapper {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Book Data</h1>
+    <table id="book-table" class="display">
+        <thead>
+            <tr>
+                <th>Book ID</th>
+                <th>Title</th>
+                <th>ISBN</th>
+                <th>Publication Date</th>
+                <th>Genre</th>
+                <th>Language</th>
+                <th>Page Count</th>
+                <th>Price</th>
+                <th>Publisher ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data rows will be dynamically added here using JavaScript -->
+        </tbody>
+    </table>
+
+    <h1>Add a New Book</h1>
+    <form id="addBookForm">
+        <label for="bookid">Book ID:</label>
+        <input type="number" id="bookid" name="bookid" required><br>
+
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required><br>
+
+        <label for="isbn">ISBN:</label>
+        <input type="text" id="isbn" name="isbn"><br>
+
+        <label for="genre">Genre:</label>
+        <input type="text" id="genre" name="genre"><br>
+
+        <label for="language">Language:</label>
+        <input type="text" id="language" name="language"><br>
+
+        <label for="pageCount">Page Count:</label>
+        <input type="number" id="pageCount" name="pageCount"><br>
+
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price"><br>
+
+        <label for="publisherID">Publisher ID:</label>
+        <input type="number" id="publisherID" name="publisherID"><br>
+
+        <button type="button" id="submitBtn">Add Book</button>
+    </form>
+
+    <div id="message"></div>
+
+
+
+<h1>Update Publishing House</h1>
+    <form id="updatePublishingForm">
+        <label for="publisherName">Publisher Name:</label>
+        <input type="text" id="publisherName" name="publisherName" required><br>
+
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" required><br>
+
+        <label for="contactInfo">Contact Info:</label>
+        <input type="text" id="contactInfo" name="contactInfo" required><br>
+
+        <button type="button" id="updateBtn">Update Publishing House</button>
+    </form>
+
+    <div id="message"></div>
+    <script>
+        // JavaScript code for populating and handling DataTables goes here...
+    </script>
+</body>
+</html>
+
+
+<script>
+    $(document).ready(function() {
+        $("#submitBtn").click(function() {
+            // Get form data
+            var formData = $("#addPublishingForm").serialize();
+
+            // Send AJAX POST request to create a new publishing house
+            $.ajax({
+                type: "POST",
+                url: "/addpub", // Use the correct endpoint URL for adding a publishing house
+                data: formData,
+                success: function(response) {
+                    $("#message").html(response);
+                    // Clear the form after successful submission
+                    $("#addPublishingForm")[0].reset();
+                },
+                error: function(xhr, status, error) {
+                    $("#message").html("An error occurred: " + error);
+                }
+            });
+        });
+    });
+</script>
+
+    <script>
+        $(document).ready(function() {
+            $("#submitBtn").click(function() {
+                // Get form data
+                var formData = $("#addBookForm").serialize();
+
+                // Send AJAX POST request to create a new book
+                $.ajax({
+                    type: "POST",
+                    url: "/addbook", // Use the correct endpoint URL
+                    data: formData,
+                    success: function(response) {
+                        $("#message").html(response);
+                        // Clear the form after successful submission
+                        $("#addBookForm")[0].reset();
+                    },
+                    error: function(xhr, status, error) {
+                        $("#message").html("An error occurred: " + error);
+                    }
+                });
+            });
+        });
+    </script>
+    
+    <script>
+    $(document).ready(function () {
+        $('#book-table').DataTable({
+            "ajax": {
+                "url": "/book", // Replace with your Spring Boot endpoint URL for retrieving book data
+                "dataSrc": ""
+            },
+            "columns": [
+                { "data": "bookID" },
+                { "data": "title" },
+                { "data": "isbn" },
+             
+                { "data": "genre" },
+                { "data": "language" },
+                { "data": "pageCount" },
+                { "data": "price" },
+                { "data": "publisherID" }
+            ]
+        });
+    });
+</script>
+
+
+
+<body>
+    <h1>Publishing House Data</h1>
+    <table id="publishing-table" class="display">
+        <thead>
+            <tr>
+                <th>Publisher ID</th>
+                <th>Publisher Name</th>
+                <th>Location</th>
+                <th>Contact Info</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data rows will be dynamically added here using JavaScript -->
+        </tbody>
+    </table>
+
+    <h1>Add a New Publishing House</h1>
+    <form id="addPublishingForm">
+        <label for="publisherName">Publisher Name:</label>
+        <input type="text" id="publisherName" name="publisherName" required><br>
+
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" required><br>
+
+        <label for="contactInfo">Contact Info:</label>
+        <input type="text" id="contactInfo" name="contactInfo" required><br>
+
+        <button type="button" id="addPublishingBtn">Add Publishing House</button>
+    </form>
+
+    <div id="publishingMessage"></div>
+
+    <script>
+        
+    $(document).ready(function () {
+        $('#publishing-table').DataTable({
+            "ajax": {
+                "url": "/publish", // Replace with your Spring Boot endpoint URL for retrieving publishing house data
+                "dataSrc": ""
+            },
+            "columns": [
+                { "data": "publisherID" },
+                { "data": "publisherName" },
+                { "data": "location" },
+                { "data": "contactInfo" }
+            ]
+        });
+    });
+</script>
+
+
+<script>
+    $(document).ready(function() {
+        // Function to update a publishing house
+        function updatePublishingHouse() {
+            var updateData = {
+                publisherName: $("#publisherName").val(),
+                location: $("#location").val(),
+                contactInfo: $("#contactInfo").val()
+            };
+            
+            // Get the publisher ID to be updated (you can fetch it from your UI)
+            var publisherIdToUpdate = 1; // Replace with the actual ID
+            
+            // Send AJAX PUT request to update the publishing house
+            $.ajax({
+                type: "PUT",
+                url: "/updatepub/" + publisherIdToUpdate, // Replace with your endpoint URL
+                data: JSON.stringify(updateData),
+                contentType: "application/json",
+                success: function(response) {
+                    $("#message").html(response);
+                    // Clear the form after successful submission
+                    $("#updatePublishingForm")[0].reset();
+                },
+                error: function(xhr, status, error) {
+                    $("#message").html("An error occurred: " + error);
+                }
+            });
+        }
+
+        // Handle the update button click
+        $("#updateBtn").click(function() {
+            updatePublishingHouse();
+        });
+    });
+</script>
+
+</body>
+</html>
